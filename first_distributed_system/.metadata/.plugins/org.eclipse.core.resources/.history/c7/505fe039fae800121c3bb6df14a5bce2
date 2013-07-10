@@ -26,21 +26,9 @@ public class ClientProcessor implements Runnable{
 		listeners.remove(toRemove);
 	}
 	
-	
 	public void connect(){
 		for(Connectable c : listeners){
 			c.connect();
-		}
-	}
-	
-	public void request(String request){
-		for(Connectable c : listeners){
-			c.request(request);
-		}
-	}
-	public void response(String response){
-		for(Connectable c : listeners){
-			c.response(response);
 		}
 	}
 	
@@ -56,18 +44,16 @@ public class ClientProcessor implements Runnable{
 			InputStream clientInput = clientSocket.getInputStream();
 		
 			Scanner inputReader = new Scanner(clientInput);
+		
 			String userRequestedMethod = inputReader.next();
 			int firstInt = inputReader.nextInt();
 			int secondInt = inputReader.nextInt();
 		
-			String request = userRequestedMethod+" "+firstInt+" "+secondInt;
-			request(request);
 			int value = userRequestedMethod.equalsIgnoreCase("add")?logic.add(firstInt, secondInt):logic.subtract(firstInt, secondInt);
 		
 			OutputStream clientOutput = clientSocket.getOutputStream();
 			PrintWriter clientWriter = new PrintWriter(clientOutput);
 			String response = "Value "+value;
-			response(response);
 			clientWriter.write(response);
 			clientWriter.flush();
 			clientWriter.close();

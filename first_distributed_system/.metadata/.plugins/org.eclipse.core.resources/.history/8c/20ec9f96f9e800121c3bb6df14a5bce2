@@ -20,7 +20,6 @@ public class ServerApplication implements Connectable{
 	
 	public void start() throws IOException{
 		while(true){
-			System.out.println("Listening for client connection...");
 			Socket clientSocket = serverSocket.accept();
 			
 			ClientProcessor newProcessor = new ClientProcessor(logic,clientSocket);
@@ -40,10 +39,7 @@ public class ServerApplication implements Connectable{
 	}
 
 	public void request(String request) {
-		System.out.println("REQUEST: "+request);
-	}
-
-	public void response(String response) {
-		System.out.println("RESPONSE: "+response);
+		// TODO Auto-generated method stub
+		
 	}
 }

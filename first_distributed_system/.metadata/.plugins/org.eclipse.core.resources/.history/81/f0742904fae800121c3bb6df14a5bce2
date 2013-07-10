@@ -44,6 +44,6 @@ public class ServerApplication implements Connectable{
 	}
 
 	public void response(String response) {
-		System.out.println("RESPONSE: "+response);
+		
 	}
 }

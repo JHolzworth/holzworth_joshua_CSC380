@@ -6,7 +6,5 @@ public interface Connectable {
 	
 	public void request(String request);
 	
-	public void response(String response);
-	
 	public void disconnect();
 }
