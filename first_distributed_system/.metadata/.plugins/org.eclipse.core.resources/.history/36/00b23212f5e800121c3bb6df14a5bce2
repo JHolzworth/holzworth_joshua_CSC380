@@ -1,0 +1,13 @@
+package Controller;
+
+public class ClientProcessor implements Runnable{
+
+	public ClientProcessor(){
+		
+	}
+	
+	public void run() {
+		
+	}
+
+}

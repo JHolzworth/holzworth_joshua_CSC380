@@ -1,0 +1,18 @@
+package Server;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+
+public class ServerApplication {
+
+	ServerSocket serverSocket;
+	
+	
+	public ServerApplication(int socketNumber) throws IOException{
+		serverSocket = new ServerSocket(socketNumber);
+		
+		while(true){
+			serverSocket.accept();
+		}
+	}
+}

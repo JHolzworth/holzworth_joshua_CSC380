@@ -1,0 +1,7 @@
+package Controller;
+
+public interface Connectable {
+
+	public void Connect();
+	public void Disconnect();
+}

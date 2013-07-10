@@ -1,0 +1,12 @@
+package Server;
+
+import java.net.ServerSocket;
+
+public class ServerApplication {
+
+	ServerSocket serverSocket;
+	
+	public ServerApplication(){
+		
+	}
+}

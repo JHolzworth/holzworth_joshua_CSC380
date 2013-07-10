@@ -1,0 +1,8 @@
+package StartUp;
+
+public class ClientDriver {
+
+	public static void main(String[]args){
+		ClientApplication client = new ClientApplication();
+	}
+}

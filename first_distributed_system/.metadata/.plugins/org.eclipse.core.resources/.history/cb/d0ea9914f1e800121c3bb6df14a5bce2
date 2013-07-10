@@ -1,0 +1,42 @@
+package Server;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
+
+import Controller.MathLogic;
+
+public class ServerApplication {
+
+	ServerSocket serverSocket;
+	static MathLogic logic = new MathLogic();
+
+	public ServerApplication(int port) throws IOException{
+		serverSocket = new ServerSocket(port);
+	}
+	
+	
+	
+	public void start() throws IOException{
+		while(true){
+			Socket clientSocket = serverSocket.accept();
+			System.out.println("A new client has connected");
+			InputStream clientInput = clientSocket.getInputStream();
+			Scanner inputReader = new Scanner(clientInput);
+			
+			String userRequestedMethod = inputReader.next();
+			int firstInt = inputReader.nextInt();
+			int secondInt = inputReader.nextInt();
+			
+			if(userRequestedMethod.equalsIgnoreCase("add")){
+				System.out.println()
+			}
+			
+			
+			
+			System.out.println(userRequestedMethod+" "+firstInt+" "+secondInt);
+		}
+	}
+}

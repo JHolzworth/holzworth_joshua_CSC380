@@ -1,0 +1,13 @@
+package StartUp;
+
+import Server.ServerApplication;
+
+public class Driver {
+
+	public static void main(String[]args){
+		
+		int fakePort = 5000;
+		
+		ServerApplication server = new ServerApplication(5000);
+	}
+}

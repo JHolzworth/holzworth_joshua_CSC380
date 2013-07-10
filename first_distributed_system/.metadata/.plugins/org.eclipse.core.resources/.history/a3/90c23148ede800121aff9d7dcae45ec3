@@ -1,0 +1,10 @@
+package StartUp;
+
+import Client.ClientApplication;
+
+public class ClientDriver {
+
+	public static void main(String[]args){
+		ClientApplication client = new ClientApplication("localhost",5000);
+	}
+}

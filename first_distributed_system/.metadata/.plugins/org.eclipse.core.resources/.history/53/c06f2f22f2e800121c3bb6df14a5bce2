@@ -1,0 +1,53 @@
+package Client;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+
+public class ClientApplication {
+
+	
+	Socket clientSocket;
+	
+	public ClientApplication(String host, int port) throws UnknownHostException, IOException{
+		clientSocket = new Socket(host,port);
+		
+	}
+	
+	
+	private String getClientRequest(){
+
+		Scanner clientInput = new Scanner(System.in);
+		
+		String request = clientInput.next();
+		request+=" "+clientInput.nextInt();
+		request+=" "+clientInput.nextInt();
+		return request;
+	}
+	
+	public void start() throws IOException{
+		System.out.println("Client Socket created");
+		
+		//Print directions
+		System.out.println("Print directions");
+		
+		
+		
+		//get input
+		
+		//After getting input
+		OutputStream output = clientSocket.getOutputStream();
+		PrintWriter writer = new PrintWriter(output);
+		
+		writer.write(request);
+		
+		writer.flush();
+		writer.close();
+		
+		//Delete when finished closes socket
+		clientSocket.close();
+	}
+}

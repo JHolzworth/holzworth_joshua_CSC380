@@ -1,0 +1,14 @@
+package Controller;
+
+public class ClientProcessor implements Runnable{
+
+	MathLogic logic;
+	public ClientProcessor(){
+		
+	}
+	
+	public void run() {
+		
+	}
+
+}

@@ -1,0 +1,14 @@
+package Client;
+
+import java.net.Socket;
+
+public class ClientApplication {
+
+	
+	Socket clientSocket;
+	
+	public ClientApplication(int port){
+		clientSocket = new Socket();
+		clientSocket.connect(port);
+	}
+}

@@ -1,0 +1,47 @@
+package Server;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
+
+import Controller.MathLogic;
+
+public class ServerApplication {
+
+	ServerSocket serverSocket;
+	static MathLogic logic = new MathLogic();
+
+	public ServerApplication(int port) throws IOException{
+		serverSocket = new ServerSocket(port);
+	}
+	
+	public void start() throws IOException{
+		while(true){
+			Socket clientSocket = serverSocket.accept();
+			
+			Thread nextClient = new Thread();
+			
+			
+			
+			System.out.println("A new client has connected");
+			InputStream clientInput = clientSocket.getInputStream();
+			Scanner inputReader = new Scanner(clientInput);
+			
+			String userRequestedMethod = inputReader.next();
+			int firstInt = inputReader.nextInt();
+			int secondInt = inputReader.nextInt();
+			
+			int value = userRequestedMethod.equalsIgnoreCase("add")?logic.add(firstInt, secondInt):logic.subtract(firstInt, secondInt);
+			
+			OutputStream clientOutput = clientSocket.getOutputStream();
+			PrintWriter clientWriter = new PrintWriter(clientOutput);
+			clientWriter.write("Value " +value);
+			clientWriter.flush();
+			clientWriter.close();
+		}
+	}
+}

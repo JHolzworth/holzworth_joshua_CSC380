@@ -1,0 +1,10 @@
+package StartUp;
+
+import Server.ServerApplication;
+
+public class Driver {
+
+	public static void main(String[]args){
+		ServerApplication server = new ServerApplication(5000);
+	}
+}

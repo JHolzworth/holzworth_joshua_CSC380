@@ -1,0 +1,30 @@
+package Server;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class ServerApplication {
+
+	ServerSocket serverSocket;
+	
+	
+	public ServerApplication(int socketNumber) throws IOException{
+		serverSocket = new ServerSocket(socketNumber);
+		
+		while(true){
+			Socket clientSocket = serverSocket.accept();
+			InputStream clientInput = clientSocket.getInputStream();
+			Scanner inputReader = new Scanner(clientInput);
+			
+			while(inputReader.hasNext()){
+				String userRequest = inputReader.next("");
+			}
+			
+			OutputStream clientOutput = clientSocket.getOutputStream();
+		}
+	}
+}
