@@ -134,12 +134,12 @@ public class ClientProcessor implements Runnable{
 				Class current =  Class.forName(primLookUp.get(paramTypes[i].getName()));
 					//Character can't use valueOf
 				if(paramTypes[i].getName().equals("char")){
-					userParams[i] = (inputReader.nextLine().charAt(0));//primCastLookUp.get(paramTypes[i].getName()).invoke(cast.invoke(current, inputReader.nextCnextChar()));
+					userParams[i] = (inputReader.next().charAt(0));//primCastLookUp.get(paramTypes[i].getName()).invoke(cast.invoke(current, inputReader.nextCnextChar()));
 				}
 				else{
 					Method cast = current.getMethod("valueOf", String.class);
-					String userInput = inputReader.nextLine();
-					Object casted = cast.invoke(null,userInput);
+					System.out.println(userParams.length);
+					Object casted = cast.invoke(null,inputReader.nextLine());
 					userParams[i] = primCastLookUp.get(paramTypes[i].getName()).invoke(casted);
 
 				}

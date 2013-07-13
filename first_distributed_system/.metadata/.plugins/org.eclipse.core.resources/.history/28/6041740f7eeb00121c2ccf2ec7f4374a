@@ -138,7 +138,9 @@ public class ClientProcessor implements Runnable{
 				}
 				else{
 					Method cast = current.getMethod("valueOf", String.class);
+					System.out.println(userParams.length);
 					String userInput = inputReader.nextLine();
+					System.out.println(userInput);
 					Object casted = cast.invoke(null,userInput);
 					userParams[i] = primCastLookUp.get(paramTypes[i].getName()).invoke(casted);
 
