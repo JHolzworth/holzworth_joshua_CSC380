@@ -1,0 +1,8 @@
+package Controller;
+
+public interface Operatable {
+
+	public int add(int ... numbers);
+	
+	public int subtract(int ... numbers);
+}

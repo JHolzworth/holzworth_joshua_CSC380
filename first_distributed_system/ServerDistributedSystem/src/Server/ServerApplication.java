@@ -1,6 +1,7 @@
 package Server;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
@@ -18,7 +19,11 @@ public class ServerApplication implements Connectable{
 		serverSocket = new ServerSocket(port);
 	}
 	
-	public void start() throws IOException{
+	
+	public void start() throws IOException, NoSuchMethodException, SecurityException{
+		
+		
+		
 		while(true){
 			System.out.println("Listening for client connection...");
 			Socket clientSocket = serverSocket.accept();

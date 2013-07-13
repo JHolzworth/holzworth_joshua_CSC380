@@ -1,0 +1,10 @@
+package Controller;
+
+import java.util.ArrayList;
+
+public interface Operatable {
+
+	public int add(int[] numbers);
+	
+	public int subtract(int[] numbers);
+}

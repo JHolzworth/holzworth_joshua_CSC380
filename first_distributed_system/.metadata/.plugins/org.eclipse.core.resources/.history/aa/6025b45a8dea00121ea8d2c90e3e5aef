@@ -1,0 +1,22 @@
+package Controller;
+
+public class MathLogic implements Operatable{
+
+	public int add(int... numbers) {
+		int sum = 0;
+		for(int next : numbers){
+			sum+=next;
+		}
+		return sum;
+	}
+
+	public int subtract(int... numbers) {
+		int difference = 0;
+		
+		for(int next : numbers){
+			difference-=next;
+		}
+		return difference;
+	}
+
+}

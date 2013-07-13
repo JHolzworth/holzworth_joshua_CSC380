@@ -1,0 +1,15 @@
+package Controller;
+
+public class MathLogic implements Operatable{
+
+	public int add(int... numbers) {
+		int sum = 0;
+		return sum;
+	}
+
+	public int subtract(int... numbers) {
+		int difference = 0;
+		return difference;
+	}
+
+}

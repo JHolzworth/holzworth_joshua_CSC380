@@ -1,0 +1,24 @@
+package Controller;
+
+import java.util.ArrayList;
+
+public class MathLogic{
+
+	public int add(int... numbers) {
+		int sum = 0;
+		for(int next : numbers){
+			sum+=next;
+		}
+		return sum;
+	}
+
+	public int subtract(int.. numbers) {
+		int difference = numbers[0];
+		
+		for(int i=1;i<numbers.length;i++){
+			difference-=numbers[i];
+		}
+		return difference;
+	}
+
+}

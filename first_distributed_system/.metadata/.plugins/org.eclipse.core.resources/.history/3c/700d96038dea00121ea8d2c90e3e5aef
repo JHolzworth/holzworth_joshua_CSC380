@@ -1,0 +1,13 @@
+package Controller;
+
+public class MathLogic {
+
+	public int add(int ... numbers) {
+	}
+
+	public int subtract(int a, int b) {
+		int difference = a - b;
+		return difference;
+	}
+
+}
