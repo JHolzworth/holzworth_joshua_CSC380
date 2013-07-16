@@ -6,9 +6,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
 
+import UserFacingPackage.MathLogic;
+
 import Controller.ClientProcessor;
 import Controller.Connectable;
-import Controller.MathLogic;
 
 public class ServerApplication implements Connectable{
 
@@ -20,7 +21,7 @@ public class ServerApplication implements Connectable{
 	}
 	
 	
-	public void start() throws IOException, NoSuchMethodException, SecurityException{
+	public void start() throws IOException, NoSuchMethodException, SecurityException, ClassNotFoundException{
 		
 		
 		

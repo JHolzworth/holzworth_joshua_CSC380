@@ -1,4 +1,5 @@
 package Controller;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -6,18 +7,21 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Scanner;
+
+import UserFacingPackage.MathLogic;
 
 public class ClientProcessor implements Runnable{
 
 	MathLogic logic;
 	Socket clientSocket;
 	ArrayList<Connectable> listeners = new ArrayList<Connectable>();
-	public ClientProcessor(MathLogic _logic, Socket _clientSocket) throws NoSuchMethodException, SecurityException{
+	public ClientProcessor(MathLogic _logic, Socket _clientSocket) throws NoSuchMethodException, SecurityException, ClassNotFoundException, IOException{
 		logic = _logic;
 		clientSocket = _clientSocket;
 		setUpMethodTable();
@@ -74,6 +78,35 @@ public class ClientProcessor implements Runnable{
 		}
 		return options;
 	}
+	private Class[] grabClasses(String packet) throws ClassNotFoundException, IOException {
+				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+				Enumeration<URL> resources = classLoader.getResources(packet.replace('.', '/'));
+				ArrayList<File> directories = new ArrayList<File>();
+				ArrayList<Class> classes = new ArrayList<Class>();
+				while (resources.hasMoreElements())
+					directories.add(new File(resources.nextElement().getFile()));
+				for (File d : directories)
+					classes.addAll(possibleClasses(d, packet));
+				
+				return classes.toArray(new Class[classes.size()]);
+			}
+			 
+			
+			private List<Class> possibleClasses(File directory, String packageName) throws ClassNotFoundException {
+				List<Class> classes = new ArrayList<Class>();
+				if( directory.exists()){
+					for (File f : directory.listFiles()) {
+						if (f.isDirectory())
+							classes.addAll(possibleClasses(f, packageName + "." + f.getName()));
+						else if (f.getName().endsWith(".class")){
+							String end = f.getName().substring(0, f.getName().length() - 6);
+							classes.add(Class.forName(packageName + '.' + end));
+						}
+					}
+				}
+				return classes;
+			}
+	
 	
 	private void primativeSetUp() throws NoSuchMethodException, SecurityException{
 		
@@ -100,14 +133,36 @@ public class ClientProcessor implements Runnable{
 	
 	Hashtable<String,Class[]> lookUpTable = new Hashtable<String,Class[]>();
 	
-	private void setUpMethodTable(){
-		Method[] allMethods = MathLogic.class.getDeclaredMethods();
-		for(int i=0;i<allMethods.length;i++){
-			lookUpTable.put(allMethods[i].getName(),allMethods[i].getParameterTypes());
+	
+	private String fileLocation = "Controller";
+	
+	private void setUpMethodTable() throws ClassNotFoundException, IOException{
+		
+		Class[] classes = grabClasses(fileLocation);
+		for(Class c : classes){
+			Method[] allMethods = c.getDeclaredMethods();
+			for(int i=0;i<allMethods.length;i++){
+				lookUpTable.put(allMethods[i].getName(),allMethods[i].getParameterTypes());
+			}
 		}
 	}
 	
-	public void obtainMethodInformation() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException{
+	private Class getClass(String methodName) throws ClassNotFoundException, IOException{
+		Class chosen = null;
+		Class[] classes = grabClasses(fileLocation);
+		for(Class c : classes){
+			for(Method m : c.getDeclaredMethods()){
+				if(m.getName().equals(methodName))
+				{
+					chosen = c;
+					break;
+				}
+			}
+		}
+		return chosen;
+	}
+	
+	public void obtainMethodInformation() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, InstantiationException{
 		InputStream clientInput = clientSocket.getInputStream();
 		Scanner inputReader = new Scanner(clientInput);
 		
@@ -120,8 +175,9 @@ public class ClientProcessor implements Runnable{
 		clientWriter.println(paramTypes.length);
 		clientWriter.flush();
 
-		
-		Method chosenMethod = MathLogic.class.getMethod(request,paramTypes);
+		Class instance = getClass(request);
+		Object invoker = instance.newInstance();
+		Method chosenMethod = instance.getMethod(request,paramTypes);
 		
 		Object[] userParams = new Object[paramTypes.length];
 		
@@ -145,16 +201,18 @@ public class ClientProcessor implements Runnable{
 				}
 			}
 		}
+		
+		
 		Class returnType = chosenMethod.getReturnType();
 		String value = "";
 		if(returnType.getName().equals("java.lang.String")){
-			value = (String) (returnType.cast(chosenMethod.invoke(logic, userParams)));
+			value = (String) (returnType.cast(chosenMethod.invoke(invoker, userParams)));
 		}
 		else if(returnType.getName().equals("char")){
-			value = chosenMethod.invoke(logic,userParams).toString();
+			value = chosenMethod.invoke(invoker,userParams).toString();
 		}
 		else{
-			value = ((primCastLookUp.get(returnType.getName()).invoke(chosenMethod.invoke(logic, userParams)))).toString();
+			value = ((primCastLookUp.get(returnType.getName()).invoke(chosenMethod.invoke(invoker, userParams)))).toString();
 		}
 		String response = "Value "+value;
 		clientWriter.println(response+"\n");

@@ -1,0 +1,23 @@
+package StartUp;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+
+import Server.ServerApplication;
+
+public class ServerDriver {
+
+	final static int PORT = 5000;
+	
+	public static void main(String[]args) throws IOException, NoSuchMethodException, SecurityException{
+		
+		classes.toArray(new Class[classes.size()]);
+		ServerApplication server = new ServerApplication(PORT);
+		server.start();
+		
+	}
+}
