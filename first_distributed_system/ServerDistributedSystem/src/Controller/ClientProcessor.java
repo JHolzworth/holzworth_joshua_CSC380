@@ -134,7 +134,7 @@ public class ClientProcessor implements Runnable{
 	Hashtable<String,Class[]> lookUpTable = new Hashtable<String,Class[]>();
 	
 	
-	private String fileLocation = "Controller";
+	private String fileLocation = "UserFacingPackage";
 	
 	private void setUpMethodTable() throws ClassNotFoundException, IOException{
 		
