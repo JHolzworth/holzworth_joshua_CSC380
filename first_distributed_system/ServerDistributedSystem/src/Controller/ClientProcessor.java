@@ -2,8 +2,10 @@ package Controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
@@ -162,6 +164,28 @@ public class ClientProcessor implements Runnable{
 		return chosen;
 	}
 	
+	private Object parseString(Class c, Scanner inputReader) throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		Object toReturn;
+		if(c.getName().equals("java.lang.String")){
+			toReturn = inputReader.nextLine();
+		}
+		else{
+			Class current =  Class.forName(primLookUp.get(c.getName()));
+				//Character can't use valueOf
+			if(c.getName().equals("char")){
+				toReturn = (inputReader.nextLine().charAt(0));//primCastLookUp.get(paramTypes[i].getName()).invoke(cast.invoke(current, inputReader.nextCnextChar()));
+			}
+			else{
+				Method cast = current.getMethod("valueOf", String.class);
+				String userInput = inputReader.nextLine();
+				Object casted = cast.invoke(null,userInput);
+				toReturn = primCastLookUp.get(c.getName()).invoke(casted);
+
+			}
+		}
+		return toReturn;
+	}
+	
 	public void obtainMethodInformation() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, InstantiationException{
 		InputStream clientInput = clientSocket.getInputStream();
 		Scanner inputReader = new Scanner(clientInput);
@@ -169,36 +193,37 @@ public class ClientProcessor implements Runnable{
 		String request = inputReader.nextLine();
 		Class[] paramTypes = lookUpTable.get(request);
 		
-		//Send paramNumber
+		
+		//Should send the entire Param array
 		OutputStream clientOutput = clientSocket.getOutputStream();
+		ObjectOutputStream paramOutput = new ObjectOutputStream(clientOutput);
+		paramOutput.writeObject(paramTypes);
+		
+		//This use to be just the paramNumber
 		PrintWriter clientWriter = new PrintWriter(clientOutput);
-		clientWriter.println(paramTypes.length);
-		clientWriter.flush();
+		//clientWriter.println(paramTypes.length);
+		//clientWriter.flush();
+		paramOutput.flush();
 
 		Class instance = getClass(request);
 		Object invoker = instance.newInstance();
+		
 		Method chosenMethod = instance.getMethod(request,paramTypes);
 		
 		Object[] userParams = new Object[paramTypes.length];
 		
 		for(int i=0;i<paramTypes.length;i++){
 
-			if(paramTypes[i].getName().equals("java.lang.String")){
-				userParams[i] = inputReader.nextLine();
+			if(!paramTypes[i].isPrimitive()){
+				Constructor next = Class.forName(paramTypes[i].getName()).getConstructors()[0];
+				Object[] userObjectParams = new Object[next.getParameterTypes().length];
+				for(int j=0;j<next.getParameterTypes().length;j++){
+					userObjectParams[j] = parseString(next.getParameterTypes()[j],inputReader);
+				}
+				userParams[i] = next.newInstance(userObjectParams);
 			}
 			else{
-				Class current =  Class.forName(primLookUp.get(paramTypes[i].getName()));
-					//Character can't use valueOf
-				if(paramTypes[i].getName().equals("char")){
-					userParams[i] = (inputReader.nextLine().charAt(0));//primCastLookUp.get(paramTypes[i].getName()).invoke(cast.invoke(current, inputReader.nextCnextChar()));
-				}
-				else{
-					Method cast = current.getMethod("valueOf", String.class);
-					String userInput = inputReader.nextLine();
-					Object casted = cast.invoke(null,userInput);
-					userParams[i] = primCastLookUp.get(paramTypes[i].getName()).invoke(casted);
-
-				}
+				userParams[i] = parseString(paramTypes[i],inputReader);
 			}
 		}
 		

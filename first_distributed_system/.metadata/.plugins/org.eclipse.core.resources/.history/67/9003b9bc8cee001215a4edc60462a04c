@@ -1,0 +1,8 @@
+package UserFacingPackage;
+
+public class FakeObject {
+
+	public FakeObject(byte b, char c, int i, double d, String s){
+		
+	}
+}

@@ -2,8 +2,10 @@ package Client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -29,7 +31,7 @@ public class ClientApplication {
 		return request;
 	}
 	
-	public void start() throws IOException{
+	public void start() throws IOException, ClassNotFoundException, NoSuchMethodException, SecurityException{
 		System.out.println("Client Socket created");
 		
 		
@@ -38,7 +40,7 @@ public class ClientApplication {
 		Scanner clientInput = new Scanner(input);
 		System.out.println("Obtaining instructions");
 		String options = clientInput.nextLine();
-		System.out.println("Type the desired method name followed by a list of enter delimated parameters. \nPossible options:\n"+options.replace('|','\n'));
+		System.out.println("Type the desired method name and press Enter to recieve the parameter list. \nPossible options:\n"+options.replace('|','\n'));
 
 		//SendingRequest
 		OutputStream output = clientSocket.getOutputStream();
@@ -47,12 +49,36 @@ public class ClientApplication {
 		//need to send  back value
 		writer.flush();
 		
-		int paramNum = Integer.parseInt(clientInput.nextLine());
+		
+		ObjectInputStream objectInput = new ObjectInputStream(input);
+		
+		Class[] paramTypes = (Class[]) objectInput.readObject();
+		
+		
+		//Use to get the paramNumber
+		//int paramNum = Integer.parseInt(clientInput.nextLine());
 		
 		//Send parameters
 		Scanner userInput = new Scanner(System.in);
-		for(int i=0;i<paramNum;i++){
-			writer.println(userInput.nextLine());
+		//Use to be paramNum
+		for(Class c : paramTypes){
+			if(!c.isPrimitive()){
+				for(Constructor next : Class.forName(c.getName()).getConstructors()){
+					System.out.println(next.getName());
+					Class[] constructParamTypes = next.getParameterTypes();
+					System.out.println("New class construction of type...\n***"+c.getName()+"***");
+					for(Class con : constructParamTypes){
+						System.out.println("Next parameter "+con.getName());
+						writer.println(userInput.nextLine());
+					}
+				}
+				
+				//Should write this object on stream
+			}
+			else{
+				System.out.println("Type a "+c.getName());
+				writer.println(userInput.nextLine());
+			}
 		}
 		writer.flush();
 		

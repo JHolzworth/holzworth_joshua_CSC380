@@ -1,0 +1,12 @@
+package UserFacingPackage;
+
+public class Person {
+
+	int age;
+	String name;
+	
+	public Person(String _name, int _age){
+		age = _age;
+		name = _name;
+	}
+}
